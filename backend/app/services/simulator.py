@@ -48,9 +48,12 @@ def make_demo_frame(*, t_ps: float, temperature_k: float, pressure_atm: float, p
     # Swirl deformation & pressure "breathing"
     breathe = 1.0 + 0.05 * math.sin(phase * 1.5) + 0.02 * (pressure_atm - 1.0)
     ang = phase + y * 1.3
-    x = (x0 * math.cos(ang) - z0 * math.sin(ang)) * breathe
-    z = (x0 * math.sin(ang) + z0 * math.cos(ang)) * breathe
-    y2 = y + 0.06 * math.sin(phase * 2.0 + theta)
+    # Use vectorised NumPy trig for array inputs
+    cos_ang = np.cos(ang)
+    sin_ang = np.sin(ang)
+    x = (x0 * cos_ang - z0 * sin_ang) * breathe
+    z = (x0 * sin_ang + z0 * cos_ang) * breathe
+    y2 = y + 0.06 * np.sin(phase * 2.0 + theta)
 
     color = _temp_to_color_hex(temperature_k)
     r = _lerp(0.05, 0.11, float(np.clip((temperature_k - 250.0) / 1250.0, 0.0, 1.0)))
